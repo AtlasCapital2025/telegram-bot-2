@@ -1,4 +1,5 @@
 import logging
+import os 
 import asyncio
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
@@ -7,7 +8,7 @@ from telegram.ext import (
 )
 import telegram
 
-TOKEN = "7713127569:AAE5bj6fLsn88T20Doudvndyr5R6f-d5dFg"
+TOKEN = os.environ.get("TOKEN")
 CHANNEL_USERNAME = "@atlascapitalnews"
 GUIDE_FILE_PATH = "Словарь инвестора 1.pdf"
 

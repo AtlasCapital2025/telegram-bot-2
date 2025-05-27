@@ -8,7 +8,7 @@ from telegram.ext import (
 )
 import telegram
 
-TOKEN = os.environ.get("TOKEN")
+TOKEN = os.environ.get("TOKEN", "7713127569:AAE5bj6fLsn88T20Doudvndyr5R6f-d5dFg")
 CHANNEL_USERNAME = "@atlascapitalnews"
 GUIDE_FILE_PATH = "Словарь инвестора 1.pdf"
 

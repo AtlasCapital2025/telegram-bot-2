@@ -88,10 +88,10 @@ def main():
 
     application.add_handler(MessageHandler(filters.TEXT & filters.Regex("^Старт$"), handle_start_button))
 
-    application.add_handler(MessageHandler(
-        filters.TEXT & filters.ChatType.PRIVATE & ~filters.Regex("^Старт$"),
-        show_start_menu
-    ))
+  application.add_handler(MessageHandler(
+    filters.TEXT & ~filters.Regex("^Старт$"),
+    show_start_menu
+))
 
     print("Бот запущен...")
     application.run_polling()

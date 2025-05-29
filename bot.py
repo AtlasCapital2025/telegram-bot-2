@@ -22,12 +22,12 @@ logging.basicConfig(
     level=logging.INFO
 )
 
-async def show_start_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    reply_keyboard = ReplyKeyboardMarkup(
-        keyboard=[[KeyboardButton("Старт")]],
-        resize_keyboard=True
-    )
+reply_keyboard = ReplyKeyboardMarkup(
+    keyboard=[[KeyboardButton("Старт")]],
+    resize_keyboard=True
+)
 
+async def show_start_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "Привет! Нажмите «Старт», чтобы открыть меню.",
         reply_markup=reply_keyboard
@@ -85,8 +85,9 @@ def main():
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(button, pattern="get_guide"))
     application.add_handler(CallbackQueryHandler(check_subscription_button, pattern="check_subscription"))
+
     application.add_handler(MessageHandler(filters.TEXT & filters.Regex("^Старт$"), handle_start_button))
-    
+
     application.add_handler(MessageHandler(
         filters.TEXT & filters.ChatType.PRIVATE & ~filters.Regex("^Старт$"),
         show_start_menu

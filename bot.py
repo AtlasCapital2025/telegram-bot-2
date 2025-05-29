@@ -22,7 +22,7 @@ logging.basicConfig(
     level=logging.INFO
 )
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def show_start_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_keyboard = ReplyKeyboardMarkup(
         keyboard=[[KeyboardButton("Старт")]],
         resize_keyboard=True
@@ -32,6 +32,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Привет! Нажмите «Старт», чтобы открыть меню.",
         reply_markup=reply_keyboard
     )
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await show_start_menu(update, context)
 
 async def handle_start_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     inline_keyboard = InlineKeyboardMarkup([
@@ -46,14 +49,12 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     user = update.effective_user
-
     await check_subscription(query.message, context, user.id)
 
 async def check_subscription_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     user = update.effective_user
-
     await check_subscription(query.message, context, user.id)
 
 async def check_subscription(target, context, user_id):
@@ -81,10 +82,12 @@ async def check_subscription(target, context, user_id):
 def main():
     application = ApplicationBuilder().token(TOKEN).build()
 
+    # Обработчики команд и сообщений
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(button, pattern="get_guide"))
     application.add_handler(CallbackQueryHandler(check_subscription_button, pattern="check_subscription"))
     application.add_handler(MessageHandler(filters.TEXT & filters.Regex("^Старт$"), handle_start_button))
+    application.add_handler(MessageHandler(filters.TEXT & filters.ChatType.PRIVATE, show_start_menu))  # <-- всегда
 
     print("Бот запущен...")
     application.run_polling()

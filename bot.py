@@ -16,7 +16,7 @@ import telegram
 
 TOKEN = os.environ.get("TOKEN", "your-token-here")
 CHANNEL_USERNAME = "@atlascapitalnews"
-GUIDE_FILE_PATH = "Словарь инвестора 1.pdf"
+GUIDE_FILE_PATH = "Словарь инвестора.pdf"
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",

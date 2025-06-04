@@ -42,7 +42,6 @@ async def show_start_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await show_start_menu(update, context)
 
-# Диагностическая команда, чтобы проверить, что файл доступен
 async def send_file_test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     cwd = os.getcwd()
     await update.message.reply_text(f"Текущая директория: {cwd}")

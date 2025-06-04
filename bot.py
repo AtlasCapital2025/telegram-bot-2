@@ -83,19 +83,30 @@ async def check_subscription(target, context, user_id):
             reply_markup=keyboard
         )
 
+async def send_file_test(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    import os
+    await update.message.reply_text(f"Текущая директория: {os.getcwd()}")
+    file_exists = os.path.isfile(GUIDE_FILE_PATH)
+    await update.message.reply_text(f"Файл '{GUIDE_FILE_PATH}' найден: {file_exists}")
+    if file_exists:
+        try:
+            with open(GUIDE_FILE_PATH, "rb") as pdf_file:
+                await update.message.reply_document(document=InputFile(pdf_file, filename="6 советов для начинающего инвестора.pdf"))
+        except Exception as e:
+            await update.message.reply_text(f"Ошибка при отправке файла: {e}")
+    else:
+        await update.message.reply_text("Файл не найден, проверьте путь и наличие файла.")
+
 def main():
     application = ApplicationBuilder().token(TOKEN).build()
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(button, pattern="get_guide"))
     application.add_handler(CallbackQueryHandler(check_subscription_button, pattern="check_subscription"))
-
     application.add_handler(MessageHandler(filters.TEXT & filters.Regex("^Старт$"), handle_start_button))
-
-    application.add_handler(MessageHandler(
-        filters.TEXT & filters.ChatType.PRIVATE & ~filters.Regex("^Старт$"),
-        show_start_menu
-    ))
+    application.add_handler(MessageHandler(filters.TEXT & filters.ChatType.PRIVATE & ~filters.Regex("^Старт$"), show_start_menu))
+    
+    application.add_handler(CommandHandler("filetest", send_file_test))
 
     print("Бот запущен...")
     application.run_polling()

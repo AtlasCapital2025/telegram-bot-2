@@ -13,9 +13,11 @@ from telegram.ext import (
     ContextTypes, MessageHandler, filters
 )
 import telegram
+import traceback
+
 TOKEN = os.environ.get("TOKEN", "7682858607:AAHRRibwvtX5YnJYA3Z_SFGhdIx9z906eIQ")
 CHANNEL_USERNAME = "@atlascapitalnews"
-GUIDE_FILE_PATH = "6 советов для начинающего инвестора.pdf"
+GUIDE_FILE_PATH = "6 советов для начинающего инвестора.pdf"  # Пусть в проекте, в src/
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -61,18 +63,14 @@ async def check_subscription(target, context, user_id):
     try:
         member = await context.bot.get_chat_member(chat_id=CHANNEL_USERNAME, user_id=user_id)
         if member.status in ["member", "administrator", "creator"]:
-            if os.path.isfile(GUIDE_FILE_PATH):
-                with open(GUIDE_FILE_PATH, "rb") as pdf_file:
-                    await target.reply_document(
-                        document=InputFile(pdf_file, filename="6 советов для начинающего инвестора.pdf")
-                    )
-                await target.reply_text(
-                    "Благодарим за подписку! \n"
-                    "Высылаем вам «6 советов для начинающего инвестора»\n\n"
-                    "Следите за свежими новостями и аналитикой финансового рынка в нашем канале."
-                )
-            else:
-                await target.reply_text("Файл не найден. Обратитесь к администратору.")
+            with open(GUIDE_FILE_PATH, "rb") as pdf_file:
+                input_file = InputFile(pdf_file, filename="6_sovetov.pdf")  # Имя файла без кириллицы
+                await target.reply_document(document=input_file)
+            await target.reply_text(
+                "Благодарим за подписку! \n"
+                "Высылаем вам «6 советов для начинающего инвестора»\n\n"
+                "Следите за свежими новостями и аналитикой финансового рынка в нашем канале."
+            )
         else:
             raise telegram.error.BadRequest("User not subscribed")
     except telegram.error.BadRequest:
@@ -92,11 +90,11 @@ async def send_file_test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if file_exists:
         try:
             with open(GUIDE_FILE_PATH, "rb") as pdf_file:
-                await update.message.reply_document(
-                    document=InputFile(pdf_file, filename="6 советов для начинающего инвестора.pdf")
-                )
+                input_file = InputFile(pdf_file, filename="6_sovetov.pdf")
+                await update.message.reply_document(document=input_file)
         except Exception as e:
-            await update.message.reply_text(f"Ошибка при отправке файла: {e}")
+            tb = traceback.format_exc()
+            await update.message.reply_text(f"❌ Ошибка при отправке файла:\n{e}\n\n{tb}")
     else:
         await update.message.reply_text("Файл не найден, проверьте путь и наличие файла.")
 
@@ -104,17 +102,11 @@ def main():
     application = ApplicationBuilder().token(TOKEN).build()
 
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("filetest", send_file_test))
-
     application.add_handler(CallbackQueryHandler(button, pattern="get_guide"))
     application.add_handler(CallbackQueryHandler(check_subscription_button, pattern="check_subscription"))
-
     application.add_handler(MessageHandler(filters.TEXT & filters.Regex("^Старт$"), handle_start_button))
-
-    application.add_handler(MessageHandler(
-        filters.TEXT & filters.ChatType.PRIVATE & ~filters.Regex("^Старт$"),
-        show_start_menu
-    ))
+    application.add_handler(MessageHandler(filters.TEXT & filters.ChatType.PRIVATE & ~filters.Regex("^Старт$"), show_start_menu))
+    application.add_handler(CommandHandler("filetest", send_file_test))
 
     print("Бот запущен...")
     application.run_polling()

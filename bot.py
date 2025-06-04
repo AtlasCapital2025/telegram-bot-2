@@ -14,9 +14,9 @@ from telegram.ext import (
 )
 import telegram
 
-TOKEN = os.environ.get("TOKEN", "your-token-here")
+TOKEN = os.environ.get("TOKEN", "7682858607:AAHRRibwvtX5YnJYA3Z_SFGhdIx9z906eIQ")
 CHANNEL_USERNAME = "@atlascapitalnews"
-GUIDE_FILE_PATH = "Словарь инвестора.pdf"
+GUIDE_FILE_PATH = "6 советов для начинающего инвестора.pdf"
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -39,7 +39,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def handle_start_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     inline_keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("📥 Получить «Словарь инвестора»", callback_data="get_guide")],
+        [InlineKeyboardButton("📥 Получить «6 советов для начинающего инвестора»", callback_data="get_guide")],
         [InlineKeyboardButton("📲 Подписаться", url=f"https://t.me/{CHANNEL_USERNAME.lstrip('@')}")],
         [InlineKeyboardButton("✅ Проверить подписку", callback_data="check_subscription")]
     ])
@@ -64,11 +64,11 @@ async def check_subscription(target, context, user_id):
         if member.status in ["member", "administrator", "creator"]:
             with open(GUIDE_FILE_PATH, "rb") as pdf_file:
                 await target.reply_document(
-                    document=InputFile(pdf_file, filename="Словарь инвестора.pdf")
+                    document=InputFile(pdf_file, filename="6 советов для начинающего инвестора.pdf")
                 )
             await target.reply_text(
                 "Благодарим за подписку! \n"
-                "Высылаем вам «Словарь инвестора»\n\n"
+                "Высылаем вам «6 советов для начинающего инвестора»\n\n"
                 "Следите за свежими новостями и аналитикой финансового рынка в нашем канале."
             )
         else:
